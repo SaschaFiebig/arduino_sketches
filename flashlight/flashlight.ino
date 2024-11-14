@@ -1,8 +1,10 @@
 /*
 Flashlight scetch 
 
+x = done 
+o = todo 
 mode01-normal: 
-  sub_mode: 
+  sub_modes: 
     x 1 - low light 
     x 2 - medium light 
     x 3 - maximum light 
@@ -10,8 +12,8 @@ mode02-broken:
   sub_modes:
     x 1 - permanent flickering 
     x 2 - permanent flickering with lights out pauses
-    o 3 - occasional flickering 
-    o 4 - occasional flickering with lights out pauses
+    x 3 - occasional flickering 
+    x 4 - occasional flickering with lights out pauses
 mode03-blink: 
   sub_modes: 
     x 1 - sos 
@@ -73,16 +75,14 @@ void led_pulse(int led_pin, float time_step, int pause) {
   }   
 }
 
-
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-//  pinMode(LED_BUILTIN, OUTPUT);
+  // 
 }
 
 void loop() 
 {
-  int mode = 1;      // change by pressing button for 5 seconds
-  int sub_mode = 3;  // change by shortly pressing button
+  int mode = 2;      // change by pressing button for 5 seconds
+  int sub_mode = 4;  // change by shortly pressing button
 
   if (mode > 3) { mode = 1; }
 
@@ -104,6 +104,7 @@ void loop()
   }
   else if (mode == 2)  // effect modes 
   {
+    if (sub_mode > 4) { mode = 1; }
     if (sub_mode == 1) 
     {
       int flicker_delay_time = (random(50, 3000) / 5); 
@@ -126,25 +127,42 @@ void loop()
     }
     else if (sub_mode == 3)
     {
-      // run normal for at least 5 seconds up to 20 seconds 
-      int const_light_chance = random(1, 10);
-      //if ()
-      //{
+      int no_flicker_delay_time = (random(10, 30)) * 1000; 
+      analogWrite(led_pin_11, high);
+      delay(no_flicker_delay_time);
+
+      while (1)
+      {
         int flicker_delay_time = (random(50, 3000) / 5); 
         int light_intensity = random(155, 255);  
         analogWrite(led_pin_11, light_intensity);
         delay(flicker_delay_time);
-      //}
-      //else if ()
-      //{
-        int no_flicker_delay_time = random(10, 30); 
-        analogWrite(led_pin_11, high);
-        delay(no_flicker_delay_time);
-      //}
+        int break_chance = random(1, 100);
+        if (break_chance == 1 || break_chance == 10) { break; }
+
+      }
     }
     else if (sub_mode == 4)
     {
-      // 
+      int no_flicker_delay_time = (random(10, 30)) * 1000; 
+      analogWrite(led_pin_11, high);
+      delay(no_flicker_delay_time);
+
+      while (1)
+      {
+        int flicker_delay_time = (random(50, 3000) / 5); 
+        int light_intensity = random(155, 255); 
+        int break_chance = random(1, 100);
+        int blackout = random(1, 20);
+        analogWrite(led_pin_11, light_intensity);
+        delay(flicker_delay_time);
+        if (blackout == 1)
+        {
+          analogWrite(led_pin_11, 0);
+          delay(flicker_delay_time / 2);
+        }
+        if (break_chance == 1 || break_chance == 10) { break; }
+      }
     }
   }
   else if (mode == 3)  // blink and pulse modes 
