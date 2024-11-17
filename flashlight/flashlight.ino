@@ -5,30 +5,30 @@ x = done
 o = todo 
 mode01-normal: 
   sub_modes: 
-    x 1 - low light 
-    x 2 - medium light 
-    x 3 - maximum light 
+    x 1.1 - low light 
+    x 1.2 - medium light 
+    x 1.3 - maximum light 
 mode02-broken: 
   sub_modes:
-    x 1 - permanent flickering 
-    x 2 - permanent flickering with lights out pauses
-    x 3 - occasional flickering 
-    x 4 - occasional flickering with lights out pauses
+    x 2.1 - permanent flickering 
+    x 2.2 - permanent flickering with lights out pauses
+    x 2.3 - occasional flickering 
+    x 2.4 - occasional flickering with lights out pauses
 mode03-blink: 
   sub_modes: 
-    x 1 - sos 
-    x 2 - on, off 
-    x 3 - pulse 
-    x 4 - strob with frequenzy changes 
+    x 3.1 - sos 
+    x 3.2 - on, off 
+    x 3.3 - pulse 
+    x 3.4 - strob with frequenzy changes 
 mode04-RGB+W:
   sub_modes:
-    o 1 - white 
-    o 2 - red 
-    o 3 - green 
-    o 4 - blue 
-    o 5 - yellow 
-    o 6 - cyan
-    o 7 - magenta 
+    o 4.1 - white 
+    o 4.2 - red 
+    o 4.3 - green 
+    o 4.4 - blue 
+    o 4.5 - yellow 
+    o 4.6 - cyan
+    o 4.7 - magenta 
 
 Allman style
 */
@@ -76,19 +76,19 @@ void led_pulse(int led_pin, float time_step, int pause) {
 }
 
 void setup() {
-  // 
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop() 
 {
-  int mode = 2;      // change by pressing button for 5 seconds
-  int sub_mode = 4;  // change by shortly pressing button
-
-  if (mode > 3) { mode = 1; }
+  int mode = 3;      // change by pressing button for 5 seconds
+  int sub_mode = 3;  // change by shortly pressing button
+  if (mode > 4) { mode = 1; }
 
   if (mode == 1)  // normal flashlight mode 
   {
-    if (sub_mode > 3) { mode = 1; }
+    if (sub_mode > 3) { sub_mode = 1; }
     if (sub_mode == 1)  // low mode 
     {
       analogWrite(led_pin_11, low);
@@ -104,7 +104,7 @@ void loop()
   }
   else if (mode == 2)  // effect modes 
   {
-    if (sub_mode > 4) { mode = 1; }
+    if (sub_mode > 4) { sub_mode = 1; }
     if (sub_mode == 1) 
     {
       int flicker_delay_time = (random(50, 3000) / 5); 
@@ -167,7 +167,7 @@ void loop()
   }
   else if (mode == 3)  // blink and pulse modes 
   {
-    // sos
+    if (sub_mode > 4) { sub_mode = 1; }
     if (sub_mode == 1)
     {
       sos_blink(off, high);
@@ -205,7 +205,14 @@ void loop()
   }
   else if (mode == 4)  // RGB+W
   {
-    // 
+    // test
+    analogWrite(led_pin_11, low);
+    delay(3000);
+    analogWrite(led_pin_11, medium);
+    delay(3000);
+    analogWrite(led_pin_11, high);
+    delay(3000);
+
   }
 
 
